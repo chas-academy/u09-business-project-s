@@ -1,0 +1,21 @@
+
+node_modules/
+recept/node_modules/
+backend/node_modules/
+
+
+.env
+.env.*
+recept/.env
+backend/.env
+
+build/
+dist/
+coverage/
+recept/build/
+recept/dist/
+backend/dist/
+
+# === MISC ===
+.vscode/
+.DS_Sto_
