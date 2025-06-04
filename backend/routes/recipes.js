@@ -5,7 +5,7 @@ const axios = require('axios');
 
 router.get('/fetch-recipe', async (req, res) => {
   try {
-    console.log('Hämtar recept från Spoonacular...');
+    console.log('Spoonacular API key:', process.env.SPOONACULAR_API_KEY);
     const response = await axios.get('https://api.spoonacular.com/recipes/random', {
       params: {
         apiKey: process.env.SPOONACULAR_API_KEY,
