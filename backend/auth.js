@@ -5,9 +5,16 @@ const GitHubStrategy = require('passport-github2').Strategy;
 
 const router = express.Router();
 
+passport.serializeUser((user, done) => {
+  console.log('serializeUser:', user);
+  done(null, user.id);
+});
 
-passport.serializeUser((user, done) => done(null, user));
-passport.deserializeUser((obj, done) => done(null, obj));
+passport.deserializeUser((user, done) => {
+  console.log('deserializeUser:', user);
+  done(null, user);
+});
+
 
 console.log('GITHUB_CLIENT_ID:', process.env.GITHUB_CLIENT_ID);
 console.log('GITHUB_CLIENT_SECRET:', process.env.GITHUB_CLIENT_SECRET);
@@ -33,8 +40,11 @@ router.get('/github/callback',
     res.redirect('http://localhost:3001');
   });
 
-router.get('/logout', (req, res) => {
-  req.logout(() => res.redirect('/'));
+router.get('/logout', (req, res, next) => {
+  req.logout(err => {
+    if (err) return next(err);
+    res.redirect('/');
+  });
 });
 
 router.get('/api/user', (req, res) => {
@@ -44,5 +54,6 @@ router.get('/api/user', (req, res) => {
     res.status(401).json({ error: 'Ej inloggad' });
   }
 });
+
 
 module.exports = router;

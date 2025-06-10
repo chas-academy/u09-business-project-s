@@ -3,6 +3,7 @@ const express = require('express');
 const axios = require('axios');
 const session = require('express-session');
 const passport = require('passport');
+const cors = require('cors');  
 require('dotenv').config();
 const recipeRoutes = require('./routes/recipes');
 const authRoutes = require('./auth');
@@ -11,28 +12,41 @@ const authRoutes = require('./auth');
 const Recipe = require('./models/spoon');
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+const corsOptions = {
+  origin: 'http://localhost:3001',
+  credentials: true,    
+};
+app.use(cors(corsOptions)); 
+
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
   });
-
-  app.use(session({
-    secret: 'hemligt',  
-    resave: false,
-    saveUninitialized: false,
-  }));
   
+app.use(express.json()); 
+
+app.use(session({
+  secret: 'hemligt',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { 
+    secure: false,
+    httpOnly: true,
+    sameSite: 'none',
+    maxAge: 24 * 60 * 60 * 1000 
+  }
+}));
+
 app.use(passport.initialize());
 app.use(passport.session());
+
 app.use('/auth', authRoutes);
-app.use(express.json());
-app.use(require('cors')());
-app.use('/api', recipeRoutes);
 app.use('/api', recipeRoutes);
 
 app.get('/', (req, res) => {
     res.send('Servern är igång!');
   });
-  
+
 mongoose.connect(process.env.MONGODB_URI)
 .then(() => {
     console.log('MongoDB connected successfully');

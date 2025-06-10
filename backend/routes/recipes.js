@@ -35,7 +35,15 @@ router.get('/fetch-recipe', requireLogin, async (req, res) => {
       res.status(500).json({ error: 'Något gick fel', details: err.message });
     }
   });
-
+router.delete('/recipes/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Recipe.findByIdAndDelete(id);
+    res.status(200).json({ message: 'Recept borttaget' });
+  } catch (err) {
+    res.status(500).json({ error: 'Något gick fel vid borttagning' });
+  }
+});
 router.get('/recipes', async (req, res) => {
   try {
     const recipes = await Recipe.find().sort({ createdAt: -1 });
@@ -44,5 +52,25 @@ router.get('/recipes', async (req, res) => {
     res.status(500).json({ error: 'Kunde inte hämta recept' });
   }
 });
+router.post('/recipes', (req, res) => {
+  console.log('POST /api/recipes');
+  console.log('Cookies:', req.cookies);
+  console.log('Session:', req.session);
+  console.log('User:', req.user);
+  console.log('Is Authenticated:', req.isAuthenticated());
+
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ error: 'Inloggning krävs' });
+  }
+
+  const newRecipe = new Recipe(req.body);
+  newRecipe.save()
+    .then(saved => res.json(saved))
+    .catch(err => {
+      console.error('Mongoose error:', err);
+      res.status(500).json({ error: 'Fel vid sparande', details: err.message });
+    });
+});
+
 
 module.exports = router;
