@@ -63,6 +63,10 @@ router.post('/recipes', (req, res) => {
     return res.status(401).json({ error: 'Inloggning krävs' });
   }
 
+  if (req.body._id) {
+  delete req.body._id;
+  }
+
   const newRecipe = new Recipe(req.body);
   newRecipe.save()
     .then(saved => res.json(saved))

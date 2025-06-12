@@ -8,6 +8,9 @@ require('dotenv').config();
 const recipeRoutes = require('./routes/recipes');
 const authRoutes = require('./auth');
 
+const https = require('https');
+const fs = require('fs');
+
 
 const Recipe = require('./models/spoon');
 const app = express();
@@ -17,7 +20,7 @@ const corsOptions = {
   origin: 'http://localhost:3001',
   credentials: true,    
 };
-app.use(cors(corsOptions)); 
+app.use(cors(corsOptions));
 
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
@@ -29,11 +32,10 @@ app.use(session({
   secret: 'hemligt',
   resave: false,
   saveUninitialized: false,
-  cookie: { 
-    secure: false,
-    httpOnly: true,
-    sameSite: 'none',
-    maxAge: 24 * 60 * 60 * 1000 
+    cookie: {
+  httpOnly: true,
+  sameSite: 'lax',
+  secure: false
   }
 }));
 

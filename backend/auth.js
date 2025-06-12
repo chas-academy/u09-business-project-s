@@ -5,15 +5,8 @@ const GitHubStrategy = require('passport-github2').Strategy;
 
 const router = express.Router();
 
-passport.serializeUser((user, done) => {
-  console.log('serializeUser:', user);
-  done(null, user.id);
-});
-
-passport.deserializeUser((user, done) => {
-  console.log('deserializeUser:', user);
-  done(null, user);
-});
+passport.serializeUser((user, done) => done(null, user));
+passport.deserializeUser((obj, done) => done(null, obj));
 
 
 console.log('GITHUB_CLIENT_ID:', process.env.GITHUB_CLIENT_ID);

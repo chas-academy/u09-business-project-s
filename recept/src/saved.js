@@ -12,6 +12,14 @@ function SavedRecipes() {
       .then(data => setRecipes(data))
       .catch(err => console.error('Fel vid hämtning av sparade recept:', err));
   }, []);
+  useEffect(() => {
+  fetch('http://localhost:3000/auth/api/user', {
+    credentials: 'include'
+  })
+    .then(res => res.json())
+    .then(data => console.log('Inloggad som:', data))
+    .catch(err => console.error('Ej inloggad:', err));
+}, []);
 
   return (
     <div>
