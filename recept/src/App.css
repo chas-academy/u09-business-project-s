@@ -36,3 +36,21 @@
     transform: rotate(360deg);
   }
 }
+nav {
+  background-color: #8a3636;
+  padding: 1%;
+  display: flex;
+  justify-content: center;
+  font-family: 'Segoe UI', sans-serif;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  margin: 0 1rem;
+  font-weight: 500;
+  transition: color 0.3s, background-color 0.3s;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+}

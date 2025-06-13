@@ -32,10 +32,12 @@ router.get('/github/callback',
     res.redirect('http://localhost:3001');
   });
 
-router.get('/logout', (req, res, next) => {
-  req.logout(err => {
-    if (err) return next(err);
-    res.redirect('/');
+router.get('/auth/logout', (req, res) => {
+  req.logout(() => {
+    req.session.destroy(err => {
+      if (err) return res.status(500).json({ error: 'Kunde inte logga ut' });
+      res.clearCookie('connect.sid');
+    });
   });
 });
 

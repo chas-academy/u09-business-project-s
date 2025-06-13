@@ -78,9 +78,17 @@ fetch('http://localhost:3000/api/recipes', { credentials: 'include' })
       .then(data => setSearchResults(data))
       .catch(err => {
         console.error('Fel vid sökning:', err);
-        alert('Kunde inte hämta sökresultat');
       });
   };
+const handleLogout = () => {
+  fetch('http://localhost:3000/auth/logout', {
+    credentials: 'include'
+  })
+    .then(() => {
+      setUser(null); // Ta bort användaren från state
+    })
+    .catch(err => console.error('Fel vid utloggning:', err));
+};
 
   const deleteRecipe = (id) => {
     fetch(`http://localhost:3000/api/recipes/${id}`, {
@@ -104,12 +112,14 @@ fetch('http://localhost:3000/api/recipes', { credentials: 'include' })
         <Routes>
           <Route path="/" element={
             <>
-              <h1>Recept</h1>
-              {user ? (
-                <p>Inloggad som {user.username || user.displayName || 'okänd användare'}</p>
-              ) : (
-                <Login />
-              )}
+    {user ? (
+  <div>
+    <p>Inloggad som {user.username || user.displayName || 'okänd användare'}</p>
+    <button onClick={handleLogout} style={{ marginLeft: '1rem' }}>Logga ut</button>
+  </div>
+) : (
+  <Login />
+)}
 
 
               <div style={{ margin: '1rem 0' }}>
@@ -155,11 +165,6 @@ fetch('http://localhost:3000/api/recipes', { credentials: 'include' })
     ))}
   </div>
 )}
-
-
-              {searchResults.length === 0 && searchTerm && (
-                <p style={{ marginTop: '1rem' }}>Inga recept hittades för "{searchTerm}"</p>
-              )}
             </>
           } />
           <Route path="/sparade-recept" element={<SavedRecipes />} />
