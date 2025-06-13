@@ -11,30 +11,28 @@ function requireLogin(req, res, next) {
     res.status(401).json({ error: 'Inloggning krävs' });
   }
 
-router.get('/fetch-recipe', requireLogin, async (req, res) => {
-    try {
-      const response = await axios.get('https://api.spoonacular.com/recipes/random', {
-        params: {
-          apiKey: process.env.SPOONACULAR_API_KEY,
-          number: 1
-        }
-      });
-      const r = response.data.recipes[0];
+router.get('/search-recipes', async (req, res) => {
+  const query = req.query.query;
+  if (!query) {
+    return res.status(400).json({ error: 'Sökterm saknas' });
+  }
 
-      const recipe = new Recipe({
-        title: r.title,
-        image: r.image,
-        summary: r.summary,
-        spoonacularId: r.id,
-        diet: r.diets
-      });
-  
-      await recipe.save();
-      res.status(201).json(recipe);
-    } catch (err) {
-      res.status(500).json({ error: 'Något gick fel', details: err.message });
-    }
-  });
+  try {
+    const response = await axios.get('https://api.spoonacular.com/recipes/complexSearch', {
+      params: {
+        apiKey: process.env.SPOONACULAR_API_KEY,
+        query,
+        number: 10,
+        addRecipeInformation: true
+      }
+    });
+    res.json(response.data.results);
+  } catch (err) {
+    res.status(500).json({ error: 'Fel vid sökning', details: err.message });
+  }
+});
+
+
 router.delete('/recipes/:id', async (req, res) => {
   try {
     const { id } = req.params;

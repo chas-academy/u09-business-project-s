@@ -16,7 +16,17 @@ function Login() {
 
 function App() {
   const [apiRecipes, setApiRecipes] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
   const [user, setUser] = useState(null);
+
+// hooks
+
+  useEffect(() => {
+  if (searchTerm.trim() === '') {
+    setSearchResults([]);
+  }
+}, [searchTerm]);
 
   useEffect(() => {
     fetch('http://localhost:3000/auth/api/user', { credentials: 'include' })
@@ -26,10 +36,20 @@ function App() {
   }, []);
 
   useEffect(() => {
-    fetch('http://localhost:3000/api/recipes', { credentials: 'include' })
-      .then(res => res.json())
-      .then(data => setApiRecipes(data))
-      .catch(err => console.error(err));
+fetch('http://localhost:3000/api/recipes', { credentials: 'include' })
+  .then(res => {
+    if (!res.ok) {
+      throw new Error('Ej auktoriserad');
+    }
+    return res.json();
+  })
+  .then(data => setApiRecipes(data))
+  .catch(err => {
+    console.error(err);
+    setApiRecipes([]);
+  });
+  
+
   }, []);
 
   const saveRecipe = (recipe) => {
@@ -48,6 +68,19 @@ function App() {
       })
       .catch(err => alert(err.message));
   };
+    const handleSearch = () => {
+    if (!searchTerm.trim()) return;
+
+    fetch(`http://localhost:3000/api/search-recipes?query=${encodeURIComponent(searchTerm)}`, {
+      credentials: 'include'
+    })
+      .then(res => res.json())
+      .then(data => setSearchResults(data))
+      .catch(err => {
+        console.error('Fel vid sökning:', err);
+        alert('Kunde inte hämta sökresultat');
+      });
+  };
 
   const deleteRecipe = (id) => {
     fetch(`http://localhost:3000/api/recipes/${id}`, {
@@ -61,7 +94,7 @@ function App() {
       .catch(err => alert(err.message));
   };
 
-  return (
+    return (
     <Router>
       <div className="App">
         <nav>
@@ -78,31 +111,55 @@ function App() {
                 <Login />
               )}
 
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
-                {apiRecipes.map(recipe => (
-                  <div key={recipe._id} style={{ border: '1px solid #ccc', padding: '1rem', width: '250px' }}>
-                    <h2>{recipe.title}</h2>
-                    <img src={recipe.image} alt={recipe.title} style={{ width: '100%' }} />
-                    <p dangerouslySetInnerHTML={{ __html: recipe.summary }} />
-                    {user && (
-                      <>
-                        <button
-                          onClick={() => saveRecipe(recipe)}
-                          style={{ marginTop: '0.5rem', backgroundColor: 'green', color: 'white', border: 'none', padding: '0.5rem', cursor: 'pointer' }}
-                        >
-                          Spara recept
-                        </button>
-                        <button
-                          onClick={() => deleteRecipe(recipe._id)}
-                          style={{ marginTop: '0.5rem', backgroundColor: 'red', color: 'white', border: 'none', padding: '0.5rem', cursor: 'pointer' }}
-                        >
-                          Ta bort
-                        </button>
-                      </>
-                    )}
-                  </div>
-                ))}
+
+              <div style={{ margin: '1rem 0' }}>
+                <input
+                  type="text"
+                  placeholder="Sök recept (t.ex. pasta, vegan...)"
+                  value={searchTerm}
+                  onChange={e => setSearchTerm(e.target.value)}
+                  style={{ padding: '0.5rem', width: '200px' }}
+                  onKeyDown={e => e.key === 'Enter' && handleSearch()}
+                />
+                <button onClick={handleSearch} style={{ marginLeft: '0.5rem', padding: '0.5rem' }}>
+                  Sök
+                </button>
               </div>
+
+{searchResults.length > 0 && (
+  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
+    {searchResults.map(recipe => (
+      <div key={recipe._id || recipe.spoonacularId} style={{ border: '1px solid #ccc', padding: '1rem', width: '250px' }}>
+        <h2>{recipe.title}</h2>
+        <img src={recipe.image} alt={recipe.title} style={{ width: '100%' }} />
+        <p dangerouslySetInnerHTML={{ __html: recipe.summary }} />
+        {user && (
+          <>
+            <button
+              onClick={() => saveRecipe(recipe)}
+              style={{ marginTop: '0.5rem', backgroundColor: 'green', color: 'white', border: 'none', padding: '0.5rem', cursor: 'pointer' }}
+            >
+              Spara recept
+            </button>
+            {recipe._id && (
+              <button
+                onClick={() => deleteRecipe(recipe._id)}
+                style={{ marginTop: '0.5rem', backgroundColor: 'red', color: 'white', border: 'none', padding: '0.5rem', cursor: 'pointer' }}
+              >
+                Ta bort
+              </button>
+            )}
+          </>
+        )}
+      </div>
+    ))}
+  </div>
+)}
+
+
+              {searchResults.length === 0 && searchTerm && (
+                <p style={{ marginTop: '1rem' }}>Inga recept hittades för "{searchTerm}"</p>
+              )}
             </>
           } />
           <Route path="/sparade-recept" element={<SavedRecipes />} />

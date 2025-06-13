@@ -5,6 +5,7 @@ const recipeSchema = new mongoose.Schema({
   image: String,
   summary: String,
   spoonacularId: Number,
-  diet: [String]
+  diet: [String],
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 });
 module.exports = mongoose.model('Recipe', recipeSchema);

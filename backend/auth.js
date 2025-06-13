@@ -22,7 +22,6 @@ passport.use(new GitHubStrategy({
   }
 ));
 
-
 router.get('/github',
   passport.authenticate('github', { scope: ['user:email'] })
 );
