@@ -3,16 +3,6 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import SavedRecipes from './saved';
 import './App.css';
 
-function Login() {
-  return (
-    <a
-      href="http://localhost:3000/auth/github"
-      style={{ display: 'inline-block', marginBottom: '1rem' }}
-    >
-      Logga in med GitHub
-    </a>
-  );
-}
 
 function App() {
   const [apiRecipes, setApiRecipes] = useState([]);
@@ -85,7 +75,7 @@ const handleLogout = () => {
     credentials: 'include'
   })
     .then(() => {
-      setUser(null); // Ta bort användaren från state
+      setUser(null);
     })
     .catch(err => console.error('Fel vid utloggning:', err));
 };
@@ -105,66 +95,55 @@ const handleLogout = () => {
     return (
     <Router>
       <div className="App">
-        <nav>
-          <Link to="/">Hem</Link> | <Link to="/sparade-recept">Mina recept</Link>
+         <nav className="navbar">
+          <Link to="/">Hem</Link>
+          <Link to="/sparade-recept" style={{ marginLeft: '1rem' }}>Mina recept</Link>
+          <div>
+            {user ? (
+              <button onClick={handleLogout} className="auth-button">Logga ut</button>
+            ) : (
+              <a href="http://localhost:3000/auth/github" className="auth-button">Logga in med GitHub</a>
+            )}
+          </div>
         </nav>
-
+        {user && (
+  <div className="user-info">
+    Inloggad som {user.username || user.displayName || 'okänd användare'}
+  </div>
+)}
         <Routes>
           <Route path="/" element={
             <>
-    {user ? (
-  <div>
-    <p>Inloggad som {user.username || user.displayName || 'okänd användare'}</p>
-    <button onClick={handleLogout} style={{ marginLeft: '1rem' }}>Logga ut</button>
-  </div>
-) : (
-  <Login />
-)}
-
-
-              <div style={{ margin: '1rem 0' }}>
-                <input
-                  type="text"
-                  placeholder="Sök recept (t.ex. pasta, vegan...)"
-                  value={searchTerm}
-                  onChange={e => setSearchTerm(e.target.value)}
-                  style={{ padding: '0.5rem', width: '200px' }}
-                  onKeyDown={e => e.key === 'Enter' && handleSearch()}
-                />
-                <button onClick={handleSearch} style={{ marginLeft: '0.5rem', padding: '0.5rem' }}>
-                  Sök
-                </button>
-              </div>
-
+            <div style={{ margin: '1rem 0' }}>
+            <input
+              type="text"
+              placeholder="(ex. pasta, vegan)"
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleSearch()}
+              className='search-input'
+            />
+            <button onClick={handleSearch}className='search-button'>
+              Sök
+            </button>
+            </div>
 {searchResults.length > 0 && (
-  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
+  <div className="recipe-container">
     {searchResults.map(recipe => (
-      <div key={recipe._id || recipe.spoonacularId} style={{ border: '1px solid #ccc', padding: '1rem', width: '250px' }}>
+      <div key={recipe._id || recipe.spoonacularId} className="recipe-card">
         <h2>{recipe.title}</h2>
-        <img src={recipe.image} alt={recipe.title} style={{ width: '100%' }} />
+        <img src={recipe.image} alt={recipe.title} />
         <p dangerouslySetInnerHTML={{ __html: recipe.summary }} />
         {user && (
           <>
-            <button
-              onClick={() => saveRecipe(recipe)}
-              style={{ marginTop: '0.5rem', backgroundColor: 'green', color: 'white', border: 'none', padding: '0.5rem', cursor: 'pointer' }}
-            >
-              Spara recept
-            </button>
-            {recipe._id && (
-              <button
-                onClick={() => deleteRecipe(recipe._id)}
-                style={{ marginTop: '0.5rem', backgroundColor: 'red', color: 'white', border: 'none', padding: '0.5rem', cursor: 'pointer' }}
-              >
-                Ta bort
-              </button>
-            )}
+            <button onClick={() => saveRecipe(recipe)} className='save-button'>Spara recept</button>
           </>
         )}
       </div>
     ))}
   </div>
 )}
+
             </>
           } />
           <Route path="/sparade-recept" element={<SavedRecipes />} />

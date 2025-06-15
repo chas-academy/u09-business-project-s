@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const express = require('express');
-const axios = require('axios');
 const session = require('express-session');
 const passport = require('passport');
 const cors = require('cors');  
@@ -8,11 +7,6 @@ require('dotenv').config();
 const recipeRoutes = require('./routes/recipes');
 const authRoutes = require('./auth');
 
-const https = require('https');
-const fs = require('fs');
-
-
-const Recipe = require('./models/spoon');
 const app = express();
 const PORT = process.env.PORT || 3000;
 

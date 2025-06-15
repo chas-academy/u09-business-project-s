@@ -6,6 +6,5 @@ const recipeSchema = new mongoose.Schema({
   summary: String,
   spoonacularId: Number,
   diet: [String],
-  owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 });
 module.exports = mongoose.model('Recipe', recipeSchema);

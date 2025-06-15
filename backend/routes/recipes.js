@@ -3,14 +3,6 @@ const router = express.Router();
 const Recipe = require('../models/spoon');
 const axios = require('axios');
 
-
-function requireLogin(req, res, next) {
-    if (req.isAuthenticated && req.isAuthenticated()) {
-      return next();
-    }
-    res.status(401).json({ error: 'Inloggning krävs' });
-  }
-
 router.get('/search-recipes', async (req, res) => {
   const query = req.query.query;
   if (!query) {
@@ -51,11 +43,6 @@ router.get('/recipes', async (req, res) => {
   }
 });
 router.post('/recipes', (req, res) => {
-  console.log('POST /api/recipes');
-  console.log('Cookies:', req.cookies);
-  console.log('Session:', req.session);
-  console.log('User:', req.user);
-  console.log('Is Authenticated:', req.isAuthenticated());
 
   if (!req.isAuthenticated()) {
     return res.status(401).json({ error: 'Inloggning krävs' });
