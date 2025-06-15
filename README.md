@@ -19,6 +19,10 @@ SPOONACULAR_API_KEY=spoonacular_api_nyckel
 GITHUB_CLIENT_ID=github_client_id
 GITHUB_CLIENT_SECRET=github_client_secret
 
+## Övrig dokumentation
+https://expressjs.com/
+https://www.passportjs.org/packages/passport-github2/
+
 ## Starta backend koden 
 npm start
 
