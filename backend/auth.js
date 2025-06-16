@@ -8,6 +8,8 @@ const router = express.Router();
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((obj, done) => done(null, obj));
 
+console.log('Using GITHUB_CALLBACK:', process.env.GITHUB_CALLBACK);
+
 passport.use(new GitHubStrategy({
     clientID: process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
