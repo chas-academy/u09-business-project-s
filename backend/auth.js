@@ -11,14 +11,15 @@ passport.deserializeUser((obj, done) => done(null, obj));
 console.log('Using GITHUB_CALLBACK:', process.env.GITHUB_CALLBACK);
 
 passport.use(new GitHubStrategy({
-    clientID: process.env.GITHUB_CLIENT_ID,
-    clientSecret: process.env.GITHUB_CLIENT_SECRET,
-callbackURL: process.env.GITHUB_CALLBACK,
-  },
-  (accessToken, refreshToken, profile, done) => {
-    return done(null, profile);
-  }
-));
+  clientID: process.env.GITHUB_CLIENT_ID,
+  clientSecret: process.env.GITHUB_CLIENT_SECRET,
+  callbackURL: process.env.GITHUB_CALLBACK,
+  authorizationURL: 'https://github.com/login/oauth/authorize',
+  tokenURL: 'https://github.com/login/oauth/access_token',
+  userProfileURL: 'https://api.github.com/user'
+}, (accessToken, refreshToken, profile, done) => {
+  return done(null, profile);
+}));
 
 router.get('/github',
   passport.authenticate('github', { scope: ['user:email'] })
