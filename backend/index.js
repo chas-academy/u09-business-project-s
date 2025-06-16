@@ -18,10 +18,6 @@ const corsOptions = {
   credentials: true,    
 };
 app.use(cors(corsOptions));
-
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-  });
   
 app.use(express.json()); 
 
@@ -59,6 +55,9 @@ if (process.env.NODE_ENV === 'production') {
 mongoose.connect(process.env.MONGODB_URI)
 .then(() => {
     console.log('MongoDB connected successfully');
+    app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
   })
   .catch(err => {
     console.error('MongoDB connection error:', err);
