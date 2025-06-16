@@ -1,24 +1,26 @@
 import React, { useEffect, useState } from 'react';
 
+const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3000';
+
 
 function SavedRecipes() {
   const [recipes, setRecipes] = useState([]);
 //hämta sparade
   useEffect(() => {
-    fetch('http://localhost:3000/api/recipes', {
-      credentials: 'include'
+    fetch(`${apiUrl}/api/recipes`, {
+      credentials: 'include',
     })
       .then(res => res.json())
       .then(data => setRecipes(data))
       .catch(err => console.error('Fel vid hämtning av sparade recept:', err));
   }, []);
 //radera
-  const deleteRecipe = (id) => {
+ const deleteRecipe = (id) => {
     if (!window.confirm('Är du säker på att du vill ta bort detta recept?')) return;
 
-    fetch(`http://localhost:3000/api/recipes/${id}`, {
+    fetch(`${apiUrl}/api/recipes/${id}`, {
       method: 'DELETE',
-      credentials: 'include'
+      credentials: 'include',
     })
       .then(res => {
         if (!res.ok) throw new Error('Kunde inte ta bort recept');
