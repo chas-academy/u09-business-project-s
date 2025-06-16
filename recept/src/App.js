@@ -101,7 +101,9 @@ function App() {
             {user ? (
               <button onClick={handleLogout} className="auth-button">Logga ut</button>
             ) : (
-              <a href="http://localhost:3000/auth/github" className="auth-button">Logga in med GitHub</a>
+              <a href={`${apiUrl}/auth/github`} className="auth-button"> Logga in med GitHub
+</a>
+
             )}
           </div>
         </nav>
