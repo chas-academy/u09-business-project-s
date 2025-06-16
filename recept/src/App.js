@@ -141,7 +141,6 @@ const handleLogout = () => {
         {user && (
           <>
             <button onClick={() => saveRecipe(recipe)} className='save-button'>Spara recept</button>
-              <p>Logga in för att spara recept</p>
           </>
         )}
       </div>
