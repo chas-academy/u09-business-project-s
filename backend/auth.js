@@ -28,7 +28,7 @@ router.get('/github/callback',
 res.redirect(process.env.FRONTEND_URL || 'http://localhost:3001');
   });
 
-router.get('/auth/logout', (req, res) => {
+router.get('/logout', (req, res) => {
   req.logout(() => {
     req.session.destroy(err => {
       if (err) return res.status(500).json({ error: 'Kunde inte logga ut' });
@@ -37,7 +37,7 @@ router.get('/auth/logout', (req, res) => {
   });
 });
 
-router.get('/api/user', (req, res) => {
+router.get('/user', (req, res) => {
   if (req.isAuthenticated()) {
     res.json(req.user);
   } else {

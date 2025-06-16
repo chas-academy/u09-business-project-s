@@ -18,7 +18,7 @@ function App() {
   }, [searchTerm]);
 
   useEffect(() => {
-    fetch(`${apiUrl}/auth/api/user`, { credentials: 'include' })
+    fetch(`${apiUrl}/auth/user`, { credentials: 'include' })
       .then(res => res.ok ? res.json() : null)
       .then(data => setUser(data))
       .catch(err => console.error(err));
