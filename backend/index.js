@@ -4,6 +4,8 @@ const session = require('express-session');
 const passport = require('passport');
 const cors = require('cors');  
 require('dotenv').config();
+const path = require('path');
+
 const recipeRoutes = require('./routes/recipes');
 const authRoutes = require('./auth');
 
@@ -15,7 +17,6 @@ const corsOptions = {
   credentials: true,    
 };
 app.use(cors(corsOptions));
-const path = require('path');
 
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
@@ -44,6 +45,12 @@ app.get('/', (req, res) => {
     res.send('Servern är igång!');
   });
 
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../recept/build')));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../recept/build/index.html'));
+  });
+}
 mongoose.connect(process.env.MONGODB_URI)
 .then(() => {
     console.log('MongoDB connected successfully');
@@ -51,3 +58,11 @@ mongoose.connect(process.env.MONGODB_URI)
   .catch(err => {
     console.error('MongoDB connection error:', err);
   });
+
+  if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../recept/build')));
+
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../recept/build/index.html'));
+  });
+}
