@@ -2,18 +2,28 @@ import React, { useEffect, useState } from 'react';
 
 const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3000';
 
-
-function SavedRecipes() {
+function SavedRecipes({ user }) {
   const [recipes, setRecipes] = useState([]);
-//hämta sparade
+
   useEffect(() => {
+    if (!user) {
+      setRecipes([]);
+      return;
+    }
+
     fetch(`${apiUrl}/api/recipes`, {
       credentials: 'include',
     })
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error('Inloggning krävs');
+        return res.json();
+      })
       .then(data => setRecipes(data))
-      .catch(err => console.error('Fel vid hämtning av sparade recept:', err));
-  }, []);
+      .catch(err => {
+        console.error('Fel vid hämtning av sparade recept:', err);
+        setRecipes([]);
+      });
+  }, [user]);
 //radera
  const deleteRecipe = (id) => {
     if (!window.confirm('Är du säker på att du vill ta bort detta recept?')) return;

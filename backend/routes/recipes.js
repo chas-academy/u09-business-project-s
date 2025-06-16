@@ -35,6 +35,10 @@ router.delete('/recipes/:id', async (req, res) => {
   }
 });
 router.get('/recipes', async (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ error: 'Inloggning krävs' });
+  }
+
   try {
     const recipes = await Recipe.find().sort({ createdAt: -1 });
     res.json(recipes);

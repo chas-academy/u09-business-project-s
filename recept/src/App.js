@@ -76,7 +76,6 @@ const handleLogout = () => {
     .then(res => {
       if (res.ok) {
         setUser(null);
-        alert('Utloggad!');
       } else {
         throw new Error('Kunde inte logga ut');
       }
@@ -142,6 +141,7 @@ const handleLogout = () => {
         {user && (
           <>
             <button onClick={() => saveRecipe(recipe)} className='save-button'>Spara recept</button>
+              <p>Logga in för att spara recept</p>
           </>
         )}
       </div>
@@ -151,7 +151,7 @@ const handleLogout = () => {
 
             </>
           } />
-          <Route path="/sparade-recept" element={<SavedRecipes />} />
+<Route path="/sparade-recept" element={<SavedRecipes user={user} />} />
         </Routes>
       </div>
     </Router>
