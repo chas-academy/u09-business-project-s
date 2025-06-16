@@ -69,16 +69,20 @@ function App() {
       });
   };
 
-  const handleLogout = () => {
-    fetch(`${apiUrl}/auth/logout`, {
-      credentials: 'include'
-    })
-      .then(() => {
+const handleLogout = () => {
+  fetch(`${apiUrl}/auth/logout`, {
+    credentials: 'include',
+  })
+    .then(res => {
+      if (res.ok) {
         setUser(null);
-      })
-      .catch(err => console.error('Fel vid utloggning:', err));
-  };
-
+        alert('Utloggad!');
+      } else {
+        throw new Error('Kunde inte logga ut');
+      }
+    })
+    .catch(err => alert(err.message));
+};
   const deleteRecipe = (id) => {
     fetch(`${apiUrl}/api/recipes/${id}`, {
       method: 'DELETE',

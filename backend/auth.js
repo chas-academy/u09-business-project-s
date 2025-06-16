@@ -36,8 +36,11 @@ res.redirect(process.env.FRONTEND_URL || 'http://localhost:3001');
 router.get('/logout', (req, res) => {
   req.logout(() => {
     req.session.destroy(err => {
-      if (err) return res.status(500).json({ error: 'Kunde inte logga ut' });
+      if (err) {
+        return res.status(500).json({ error: 'Kunde inte logga ut' });
+      }
       res.clearCookie('connect.sid');
+      res.sendStatus(200);
     });
   });
 });
