@@ -5,6 +5,7 @@ const passport = require('passport');
 const cors = require('cors');  
 require('dotenv').config();
 const path = require('path');
+const MongoStore = require('connect-mongo');
 
 const recipeRoutes = require('./routes/recipes');
 const authRoutes = require('./auth');
