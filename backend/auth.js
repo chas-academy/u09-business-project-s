@@ -25,7 +25,7 @@ router.get('/github',
 router.get('/github/callback', 
   passport.authenticate('github', { failureRedirect: '/' }),
   (req, res) => {
-    res.redirect('http://localhost:3001');
+res.redirect(process.env.FRONTEND_URL || 'http://localhost:3001');
   });
 
 router.get('/auth/logout', (req, res) => {
