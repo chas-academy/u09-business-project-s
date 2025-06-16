@@ -3,47 +3,44 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import SavedRecipes from './saved';
 import './App.css';
 
+const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3000';
 
 function App() {
   const [apiRecipes, setApiRecipes] = useState([]);
-    const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [user, setUser] = useState(null);
 
-// hooks
+  useEffect(() => {
+    if (searchTerm.trim() === '') {
+      setSearchResults([]);
+    }
+  }, [searchTerm]);
 
   useEffect(() => {
-  if (searchTerm.trim() === '') {
-    setSearchResults([]);
-  }
-}, [searchTerm]);
-
-  useEffect(() => {
-    fetch('http://localhost:3000/auth/api/user', { credentials: 'include' })
+    fetch(`${apiUrl}/auth/api/user`, { credentials: 'include' })
       .then(res => res.ok ? res.json() : null)
       .then(data => setUser(data))
       .catch(err => console.error(err));
   }, []);
 
   useEffect(() => {
-fetch('http://localhost:3000/api/recipes', { credentials: 'include' })
-  .then(res => {
-    if (!res.ok) {
-      throw new Error('Ej auktoriserad');
-    }
-    return res.json();
-  })
-  .then(data => setApiRecipes(data))
-  .catch(err => {
-    console.error(err);
-    setApiRecipes([]);
-  });
-  
-
+    fetch(`${apiUrl}/api/recipes`, { credentials: 'include' })
+      .then(res => {
+        if (!res.ok) {
+          throw new Error('Ej auktoriserad');
+        }
+        return res.json();
+      })
+      .then(data => setApiRecipes(data))
+      .catch(err => {
+        console.error(err);
+        setApiRecipes([]);
+      });
   }, []);
 
   const saveRecipe = (recipe) => {
-    fetch('http://localhost:3000/api/recipes', {
+    fetch(`${apiUrl}/api/recipes`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -58,10 +55,11 @@ fetch('http://localhost:3000/api/recipes', { credentials: 'include' })
       })
       .catch(err => alert(err.message));
   };
-    const handleSearch = () => {
+
+  const handleSearch = () => {
     if (!searchTerm.trim()) return;
 
-    fetch(`http://localhost:3000/api/search-recipes?query=${encodeURIComponent(searchTerm)}`, {
+    fetch(`${apiUrl}/api/search-recipes?query=${encodeURIComponent(searchTerm)}`, {
       credentials: 'include'
     })
       .then(res => res.json())
@@ -70,18 +68,19 @@ fetch('http://localhost:3000/api/recipes', { credentials: 'include' })
         console.error('Fel vid sökning:', err);
       });
   };
-const handleLogout = () => {
-  fetch('http://localhost:3000/auth/logout', {
-    credentials: 'include'
-  })
-    .then(() => {
-      setUser(null);
+
+  const handleLogout = () => {
+    fetch(`${apiUrl}/auth/logout`, {
+      credentials: 'include'
     })
-    .catch(err => console.error('Fel vid utloggning:', err));
-};
+      .then(() => {
+        setUser(null);
+      })
+      .catch(err => console.error('Fel vid utloggning:', err));
+  };
 
   const deleteRecipe = (id) => {
-    fetch(`http://localhost:3000/api/recipes/${id}`, {
+    fetch(`${apiUrl}/api/recipes/${id}`, {
       method: 'DELETE',
       credentials: 'include'
     })
