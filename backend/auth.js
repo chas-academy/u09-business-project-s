@@ -2,7 +2,7 @@ const express = require('express');
 const passport = require('passport');
 const session = require('express-session');
 const GitHubStrategy = require('passport-github2').Strategy;
-
+console.log('GitHub callback URL:', process.env.GITHUB_CALLBACK);
 const router = express.Router();
 
 passport.serializeUser((user, done) => done(null, user));
