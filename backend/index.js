@@ -63,11 +63,3 @@ mongoose.connect(process.env.MONGODB_URI)
   .catch(err => {
     console.error('MongoDB connection error:', err);
   });
-
-  if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../recept/build')));
-
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../recept/build/index.html'));
-  });
-}
