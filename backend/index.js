@@ -14,8 +14,10 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 const corsOptions = {
-  origin: process.env.CLIENT_URL || 'http://localhost:3001',
-  credentials: true,    
+  origin: process.env.NODE_ENV === 'production' 
+    ? 'https://u09-business-project-s-1.onrender.com' 
+    : 'http://localhost:3001',
+  credentials: true,
 };
 app.use(cors(corsOptions));
   
